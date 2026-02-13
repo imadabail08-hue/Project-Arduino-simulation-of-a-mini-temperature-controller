@@ -1,0 +1,49 @@
+// Pin assignments
+int tempPin = A0;
+int ledLow = 3;
+int ledMed = 5;
+int ledHigh = 6;
+int alarm = 9;
+
+void setup() {
+  pinMode(ledLow, OUTPUT);
+  pinMode(ledMed, OUTPUT);
+  pinMode(ledHigh, OUTPUT);
+  pinMode(alarm, OUTPUT);
+  Serial.begin(9600); // Optional: monitor temp
+}
+
+void loop() {
+  int sensorVal = analogRead(tempPin);
+  int temp = map(sensorVal, 0, 1023, 0, 120);
+
+  // Fan LEDs
+  if(temp < 50) {
+    digitalWrite(ledLow, LOW);
+    digitalWrite(ledMed, LOW);
+    digitalWrite(ledHigh, LOW);
+  }
+  else if(temp < 80) {
+    digitalWrite(ledLow, HIGH);
+    digitalWrite(ledMed, LOW);
+    digitalWrite(ledHigh, LOW);
+  }
+  else {
+    digitalWrite(ledLow, HIGH);
+    digitalWrite(ledMed, HIGH);
+    digitalWrite(ledHigh, HIGH);
+  }
+
+  // Alarm logic
+  if(temp >= 90) digitalWrite(alarm, HIGH);
+  else digitalWrite(alarm, LOW);
+
+  // Serial monitor for temp & fan level
+  Serial.print("Temp: "); Serial.print(temp);
+  Serial.print(" | Fan Level: ");
+  if(temp<50) Serial.println("OFF");
+  else if(temp<80) Serial.println("LOW");
+  else Serial.println("HIGH");
+
+  delay(500);
+}
